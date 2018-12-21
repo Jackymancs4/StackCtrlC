@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stack Copy Button
 // @namespace    https://github.com/MrMino/StackCtrlC
-// @version      1.0.0
+// @version      1.0.1
 // @description  try to take over the world!
 // @author       Blazej "MrMino" Michalik <im.mr.mino@gmail.com>
 // @match        *://*.stackoverflow.com/*
@@ -66,7 +66,7 @@
                     // Not just cloned, because there are too many properties that trip up jquery
                     // Button isn't just enclased as post-tag, to make sure nothing interferes with positioning
 
-                    let copycat = document.querySelector('span.post-tag');
+                    let copycat = document.querySelector('.post-tag');
                     let copycatStyle = getComputedStyle(copycat)
 
                     // button.style.display = 'none';

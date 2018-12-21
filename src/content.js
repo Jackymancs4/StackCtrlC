@@ -52,7 +52,7 @@ window.onload = function () {
                 // Not just cloned, because there are too many properties that trip up jquery
                 // Button isn't just enclased as post-tag, to make sure nothing interferes with positioning
 
-                let copycat = document.querySelector('span.post-tag');
+                let copycat = document.querySelector('.post-tag');
                 let copycatStyle = getComputedStyle(copycat)
 
                 // button.style.display = 'none';
