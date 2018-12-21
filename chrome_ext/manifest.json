@@ -20,7 +20,7 @@
 
   "content_scripts": [ {
       "matches": ["*://*.stackoverflow.com/*"],
-      "js": ["copybox.js"]
+      "js": ["content.js"]
   } ]
 
 }
