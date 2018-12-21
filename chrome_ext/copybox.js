@@ -1,94 +1,116 @@
-/*  Code written by:      Blazej "MrMino" Michalik
-                            im.mr.mino@gmail.com
-    Licence:            
-    The MIT License (MIT)
-    Copyright (c) 2016 by Błażej "MrMino" Michalik
-*/
-
 // Dump text in toCopy into clipboard
 function copyToClipboard(toCopy) {
+
     // Id of temporary form element for the selection and copy
     var hiddenTextAreaId = "_CopyButtonTextArea_";
-    
+
     // Get scrollbar position to restore it afterwards
-    var scrollPos = $(window).scrollTop();
+    var scrollPos = window.scrollY;
 
     // Create hidden text element
-    var $hid = $('<textarea></textarea>');
-    $hid.attr('id', hiddenTextAreaId);
-    $('body').append($hid);
-    
-    $hid.text(toCopy);
-    
+    var hid = document.createElement("textarea");
+    hid.id = hiddenTextAreaId;
+    document.getElementsByTagName("body")[0].appendChild(hid);
+
+    hid.textContent = toCopy;
+
     // Select the content
-    $hid.get(0).focus();
-    $hid.get(0).setSelectionRange(0, toCopy.length);
-    
+    hid.focus();
+    hid.setSelectionRange(0, toCopy.length);
+
     // Copy the selection
     document.execCommand("copy");
 
     // Clear temporary content
-    $('#'+hiddenTextAreaId).remove();
+    document.getElementById(hiddenTextAreaId).remove()
 
     // Restore scrollbar position
-    $(window).scrollTop(scrollPos);
+    window.scrollTo(0, scrollPos)
 }
 
-$(document).ready(function () {
+window.onload = function () {
+
     var buttonId = '_copyButton_';
-    var button = $('<button>Copy</button>').attr('class', buttonId);
+    var button = null;
+    var offset = null
 
-    // CSS is copied from .post-tag class, to ensure proper style when stylish is present
-    // Not just cloned, because there are too many properties that trip up jquery
-    // Button isn't just enclased as post-tag, to make sure nothing interferes with positioning
-    var copycat = $('.post-tag');
-    var css_string = {
-        'display':'none',
-        'transition-property':'none',
-        'position':'absolute',
-        'cursor':'pointer',
-        'margin':'0px',
-        'padding':              $(copycat).css('padding'),
-        'color':                $(copycat).css('color'),
-        'font-size':            $(copycat).css('font-size'),
-        'font-family':          $(copycat).css('font-family'),
-        'background-color':     $(copycat).css('background-color'),
-        'border-color':         $(copycat).css('border-color'),
-        'border-width':         $(copycat).css('border-width'),
-        'border-style':         $(copycat).css('border-style'),
-        'border-radius':        $(copycat).css('border-radius'),
-    };
-    button.css(css_string);
-    
-    // Calculating button width
-    // Element needs to be present in DOM to calculate it's width
-    // I blame Hakon Wium Lie
-    $('body').append(button);
-    var offset = button.width();
-    button.remove();
+    let preElements = document.getElementsByTagName('pre');
 
-    // For some reason, offset is still too low. I blame W3C.
-    offset += 30;
-    
-    // Hiding, fading, showing, etc.
-    $('pre').hover(function (){
-        // Calculating the right position for the button to appear
-        var pos = $(this).width() - offset;
-        // Button is cloned, so jquery won't trip up, and then moved
-        var clone = button.clone().css('margin-left', pos + "px");
+    for (let index = 0; index < preElements.length; index++) {
+        const element = preElements[index];
 
-        $(this).prepend(clone);
-        
-        // Setting click event
-        clone.click(function(){
-            var toCopy = $(this).parent().find("code").text();
-            copyToClipboard(toCopy);
-        });
-        
-        clone.fadeIn();
-    }, function (){
-        $('.' + buttonId).fadeOut(function(){
-            $(this).remove();
-        });
-    });
-});
+        element.onmouseenter = function () {
+
+            if (!button) {
+
+                button = document.createElement("button");
+
+                button.textContent = "Copy";
+                button.classList.add(buttonId);
+
+                // CSS is copied from .post-tag class, to ensure proper style when stylish is present
+                // Not just cloned, because there are too many properties that trip up jquery
+                // Button isn't just enclased as post-tag, to make sure nothing interferes with positioning
+
+                let copycat = document.querySelector('span.post-tag');
+                let copycatStyle = getComputedStyle(copycat)
+
+                // button.style.display = 'none';
+                button.style.opacity = "0";
+                button.style.transition = '0.2s';
+                button.style.position = 'absolute';
+                button.style.cursor = 'pointer';
+                button.style.margin = '0px';
+                button.style.padding = copycatStyle.padding;
+                button.style.color = copycatStyle.color;
+                button.style["font-size"] = copycatStyle["font-size"];
+                button.style["font-family"] = copycatStyle["font-family"];
+                button.style.backgroundColor = copycatStyle.backgroundColor;
+                button.style["border-color"] = copycatStyle["border-color"];
+                button.style["border-width"] = copycatStyle["border-width"];
+                button.style["border-style"] = copycatStyle["border-style"];
+                button.style["border-radius"] = copycatStyle["border-radius"];
+
+                // Calculating button width
+                // Element needs to be present in DOM to calculate it's width
+                // I blame Hakon Wium Lie
+                document.getElementsByTagName("body")[0].appendChild(button);
+                offset = button.clientWidth;
+                button.remove();
+
+                // For some reason, offset is still too low. I blame W3C.
+                offset += 30;
+            }
+
+            // Calculating the right position for the button to appear
+            var pos = element.clientWidth - offset;
+
+            // Button is cloned, so jquery won't trip up, and then moved
+            // var clone = button.cloneNode(true)
+
+            element.insertBefore(button, element.firstChild);
+
+            button.style["margin-left"] = pos + "px"
+
+            // Setting click event
+            button.onclick = function (e) {
+                var toCopy = element.querySelector("code").textContent;
+                copyToClipboard(toCopy);
+            }
+
+            setTimeout(() => {
+                element.getElementsByTagName("button")[0].style.opacity = "1"
+            }, 1)
+            // button.style.display = "block"
+        }
+
+        element.onmouseleave = function () {
+            button.style.opacity = "0"
+            // button.style.display = "none"
+            setTimeout(() => {
+                element.getElementsByClassName(buttonId)[0].remove()
+            }, 200)
+        }
+    }
+
+}
