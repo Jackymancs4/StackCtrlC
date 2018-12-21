@@ -12,7 +12,9 @@
     Copyright (c) 2018 by Błażej "MrMino" Michalik
 */
 
-(function () { // Dump text in toCopy into clipboard
+(function () {
+
+    // Dump text in toCopy into clipboard
     function copyToClipboard(toCopy) {
 
         // Id of temporary form element for the selection and copy
@@ -69,9 +71,7 @@
                     let copycat = document.querySelector('span.post-tag');
                     let copycatStyle = getComputedStyle(copycat)
 
-                    // button.style.display = 'none';
-                    button.style.opacity = "0";
-                    button.style.transition = '0.2s';
+                    button.style.display = 'none';
                     button.style.position = 'absolute';
                     button.style.cursor = 'pointer';
                     button.style.margin = '0px';
@@ -112,21 +112,18 @@
                     copyToClipboard(toCopy);
                 }
 
-                setTimeout(() => {
-                    element.getElementsByTagName("button")[0].style.opacity = "1"
-                }, 1)
-                // button.style.display = "block"
+                element.getElementsByTagName("button")[0].style.display = "block"
+
             }
 
             element.onmouseleave = function () {
-                button.style.opacity = "0"
-                // button.style.display = "none"
-                setTimeout(() => {
-                    element.getElementsByClassName(buttonId)[0].remove()
-                }, 200)
+                button.style.display = "none"
+                element.getElementsByClassName(buttonId)[0].remove()
+
             }
         }
 
     }
+
 
 })();
